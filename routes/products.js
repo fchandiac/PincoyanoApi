@@ -6,6 +6,10 @@ router.post('/products/create', async (req, res) => {
     const { code, name, subcategory_id } = req.body
     const product = await products.create(code, name, subcategory_id)
     res.json(product)
+    // const { code, name, subcategory_id } = req.body
+    // res.json({ code, name, subcategory_id })
+   
+    
 })
 
 router.get('/products/findAll', async (req, res) => {

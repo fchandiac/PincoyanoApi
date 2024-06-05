@@ -8,7 +8,7 @@ module.exports = {
         {
           user_name: 'admin',
           name: 'Administrador',
-          pass: '9898', // Asegúrate de usar una contraseña segura y hashéala
+          pass: 'admin', // Asegúrate de usar una contraseña segura y hashéala
         },
       ], {});
 
