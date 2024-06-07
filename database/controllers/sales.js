@@ -322,7 +322,7 @@ async function findAllGroupByCategoryBetweenDates(startDate, endDate) {
     group: ["Product->Subcategory->Category.id"],
   })
     .then((data) => {
-      
+
       return { code: 1, data: data };
     })
     .catch((err) => {
@@ -820,6 +820,87 @@ function groupSalesByDay(salesArray) {
   }, []);
 }
 
+
+
+const calculateProductSalesByQuantity = (data) => {
+  const productSalesMap = new Map();
+  let totalQuantityOthers = 0;
+
+  data.forEach((item) => {
+    const productId = item.Product.id;
+    const productName = item.Product.name;
+    const quantity = item.quanty;
+
+    if (productSalesMap.has(productId)) {
+      const currentTotal = productSalesMap.get(productId).totalQuantity;
+      productSalesMap.set(productId, {
+        productId,
+        productName,
+        totalQuantity: currentTotal + quantity,
+      });
+    } else {
+      productSalesMap.set(productId, {
+        productId,
+        productName,
+        totalQuantity: quantity,
+      });
+    }
+  });
+
+  let productSalesList = Array.from(productSalesMap.values());
+
+  // Ordenar la lista de productos por cantidad de ventas de mayor a menor
+  productSalesList.sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+  // Agrupar los productos desde el número 11 en "otros"
+  if (productSalesList.length > 10) {
+    const othersProducts = productSalesList.slice(10);
+    totalQuantityOthers = othersProducts.reduce(
+      (acc, curr) => acc + curr.totalQuantity,
+      0
+    );
+    productSalesList = productSalesList.slice(0, 10);
+    productSalesList.push({
+      productName: "Otros",
+      totalQuantity: totalQuantityOthers,
+    });
+  }
+
+  // Formatear la lista de salida en el formato { name: productName, value: totalQuantity }
+  const formattedProductSalesList = productSalesList.map((product) => ({
+    name: product.productName,
+    value: product.totalQuantity,
+  }));
+
+  return formattedProductSalesList;
+};
+
+async function findDashBoardTopQuanty(start, end) {
+  const sale = await Sales.findAll({
+    where: {
+      date: {
+        [sequelize.Op.between]: [start, end],
+      },
+    },
+    include: [
+      {
+        model: Products,
+      },
+    ],
+  })
+    .then((data) => {
+      const data_ = calculateProductSalesByQuantity(data);
+      return { code: 1, data: data_ };
+    })
+    .catch((err) => {
+      return { code: 0, data: err };
+    });
+
+  return sale;
+}
+
+
+
 sales.create = create;
 sales.findAll = findAll;
 sales.findAllbetweenDate = findAllbetweenDate;
@@ -850,5 +931,6 @@ sales.findAllBetweenDateToDataGrid = findAllBetweenDateToDataGrid;
 sales.totalSalesBetweenDate = totalSalesBetweenDate;
 sales.totalUnitsBetweenDate = totalUnitsBetweenDate;
 sales.salesToChartBetweenDate = salesToChartBetweenDate;
+sales.findDashBoardTopQuanty = findDashBoardTopQuanty;
 
 module.exports = sales;

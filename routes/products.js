@@ -31,6 +31,14 @@ router.post('/products/update', async (req, res) => {
 })
 
 
+//findOneByCode(code)
+
+router.post('/products/findOneByCode', async (req, res) => {
+    const { code } = req.body
+    const product = await products.findOneByCode(code)
+    res.json(product)
+})
+
 
 
 module.exports = router

@@ -189,4 +189,14 @@ router.post('/sales/salesToChartBetweenDate', async (req, res) => {
     res.json(sale)
 })
 
+
+// function findDashBoardTopQuanty(start, end)
+
+router.post('/sales/findDashBoardTopQuanty', async (req, res) => {
+    const { start, end } = req.body
+    const sale = await sales.findDashBoardTopQuanty(start, end)
+    res.json(sale)
+})
+
+
 module.exports = router

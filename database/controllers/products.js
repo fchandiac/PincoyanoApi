@@ -52,6 +52,22 @@ async function update(id, code, name, subcategory_id){
     return product
 }
 
+async function findOneByCode(code){
+    const product = await Products.findOne({ 
+        where: { code: code },
+        include: [
+            {
+                model: Subcategories,
+                include: [
+                    {
+                        model: Categories
+                    }
+                ]
+            }
+        ]
+    }).then(data => { return { 'code': 1, 'data': data } }).catch(err => { return { 'code': 0, 'data': err } })
+    return product
+}
 
 
 
@@ -60,5 +76,6 @@ products.create = create
 products.findAll = findAll
 products.findOneByName = findOneByName
 products.update = update
+products.findOneByCode = findOneByCode
 
 module.exports = products

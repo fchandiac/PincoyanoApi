@@ -1744,9 +1744,13 @@ module.exports = {
 
       
 
-      // Crear productos
+      
       await queryInterface.bulkInsert('products', 
-      [
+      [{
+            "code": 10001001,
+            "name": "PRODUCTO CON ERROR",
+            "subcategory_id": 1001
+      },
         {
             "code": 10002001,
             "name": "AZUCAR IANSA 20X1 KL",

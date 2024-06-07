@@ -114,7 +114,7 @@ module.exports = {
           },
         },
         code: { type: Sequelize.STRING, unique: true },
-        name: { type: Sequelize.STRING },
+        name: { type: Sequelize.STRING(250),  defaultValue: "" },
 
         created_at: { type: Sequelize.DATE },
         updated_at: { type: Sequelize.DATE },
