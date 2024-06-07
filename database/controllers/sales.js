@@ -1,3 +1,4 @@
+const moment = require("moment");
 const {
   Sales,
   Products,
@@ -5,7 +6,7 @@ const {
   Sellers,
   Categories,
   Subcategories,
-  Files
+  Files,
 } = require("../db");
 const sales = {};
 const sequelize = require("sequelize");
@@ -38,7 +39,7 @@ async function create(
     customer_id,
     seller_id,
     date,
-    file_id
+    file_id,
   })
     .then((data) => {
       return { code: 1, data: data };
@@ -85,7 +86,7 @@ async function findAllbetweenDate(start, end) {
       },
       {
         model: Files,
-      }
+      },
     ],
   })
     .then((data) => {
@@ -202,8 +203,6 @@ async function findAllByProductBetweenDate(product_id, start, end) {
     });
   return sale;
 }
-
-
 
 async function totalSalesBetweenDate(start, end) {
   const sale = await Sales.sum("total", {
@@ -323,6 +322,7 @@ async function findAllGroupByCategoryBetweenDates(startDate, endDate) {
     group: ["Product->Subcategory->Category.id"],
   })
     .then((data) => {
+      
       return { code: 1, data: data };
     })
     .catch((err) => {
@@ -387,8 +387,7 @@ async function findAllBySellerGroupByCategoryBetweenDate(
   return sale;
 }
 
-
-async function totalSalesByProductBetweenDates(product_id, startDate, endDate ) {
+async function totalSalesByProductBetweenDates(product_id, startDate, endDate) {
   const sale = await Sales.sum("total", {
     where: {
       product_id: product_id,
@@ -407,7 +406,11 @@ async function totalSalesByProductBetweenDates(product_id, startDate, endDate ) 
   return sale;
 }
 
-async function totalQuantyByProductBetweenDates(product_id,startDate, endDate ) {
+async function totalQuantyByProductBetweenDates(
+  product_id,
+  startDate,
+  endDate
+) {
   const sale = await Sales.sum("quanty", {
     where: {
       product_id: product_id,
@@ -425,11 +428,15 @@ async function totalQuantyByProductBetweenDates(product_id,startDate, endDate ) 
 
   return sale;
 }
-async function findAllByProductBetweenDateGroupByDate(product_id, startDate, endDate) {
+async function findAllByProductBetweenDateGroupByDate(
+  product_id,
+  startDate,
+  endDate
+) {
   const sale = await Sales.findAll({
     attributes: [
       "date",
-      'product_id',
+      "product_id",
       [sequelize.fn("sum", sequelize.col("quanty")), "total_quanty"],
       [sequelize.fn("sum", sequelize.col("total")), "total_sales"],
     ],
@@ -452,8 +459,11 @@ async function findAllByProductBetweenDateGroupByDate(product_id, startDate, end
   return sale;
 }
 
-
-async function totalSalesByCustomerBetweenDates(customer_id, startDate, endDate ) {
+async function totalSalesByCustomerBetweenDates(
+  customer_id,
+  startDate,
+  endDate
+) {
   const sale = await Sales.sum("total", {
     where: {
       customer_id: customer_id,
@@ -472,7 +482,11 @@ async function totalSalesByCustomerBetweenDates(customer_id, startDate, endDate 
   return sale;
 }
 
-async function totalQuantyByCustomerBetweenDates(customer_id,startDate, endDate ) {
+async function totalQuantyByCustomerBetweenDates(
+  customer_id,
+  startDate,
+  endDate
+) {
   const sale = await Sales.sum("quanty", {
     where: {
       customer_id: customer_id,
@@ -491,11 +505,15 @@ async function totalQuantyByCustomerBetweenDates(customer_id,startDate, endDate 
   return sale;
 }
 
-async function findAllByCustomerBetweenDateGroupByDate(customer_id, startDate, endDate) {
+async function findAllByCustomerBetweenDateGroupByDate(
+  customer_id,
+  startDate,
+  endDate
+) {
   const sale = await Sales.findAll({
     attributes: [
       "date",
-      'customer_id',
+      "customer_id",
       [sequelize.fn("sum", sequelize.col("quanty")), "total_quanty"],
       [sequelize.fn("sum", sequelize.col("total")), "total_sales"],
     ],
@@ -518,8 +536,11 @@ async function findAllByCustomerBetweenDateGroupByDate(customer_id, startDate, e
   return sale;
 }
 
-
-async function findAllByCustomerBetweenDateGroupByCategory(customer_id, startDate, endDate) {
+async function findAllByCustomerBetweenDateGroupByCategory(
+  customer_id,
+  startDate,
+  endDate
+) {
   const sale = await Sales.findAll({
     attributes: [
       "customer_id",
@@ -583,7 +604,7 @@ const destroy = async (id) => {
     });
 
   return sale;
-}
+};
 
 async function destroyAllByFile(file_id) {
   const sale = await Sales.destroy({
@@ -599,6 +620,205 @@ async function destroyAllByFile(file_id) {
   return sale;
 }
 
+async function findAllToDataGrid() {
+  const sale = await Sales.findAll({
+    attributes: [
+      "id",
+      "invoice",
+      "quanty",
+      "price",
+      "discount",
+      "return_",
+      "total_return",
+      "total_sale",
+      "total",
+      "product_id",
+      "customer_id",
+      "seller_id",
+      "date",
+      "file_id",
+    ],
+    include: [
+      {
+        model: Products,
+        attributes: ["name"],
+      },
+      {
+        model: Customers,
+        attributes: ["name"],
+      },
+      {
+        model: Sellers,
+        attributes: ["name"],
+      },
+      {
+        model: Files,
+        attributes: ["name"],
+      },
+    ],
+  })
+    .then((data) => {
+      return { code: 1, data: data };
+    })
+    .catch((err) => {
+      return { code: 0, data: err };
+    });
+
+  return sale;
+}
+
+// const toGrid = sales_.map((sale) => ({
+//   id: sale.id,
+//   sellerName: sale.Seller == null ? "" : sale.Seller.name,
+//   customerName: sale.Customer == null ? "" : sale.Customer.name,
+//   productName: sale.Product == null ? "" : sale.Product.name,
+//   quanty: sale.quanty,
+//   discount: sale.discount,
+//   price: sale.price,
+//   total_sale: sale.total_sale,
+//   total_return: sale.total_return,
+//   total: sale.total,
+//   return_: sale.return_,
+//   product_id: sale.product_id,
+//   customer_id: sale.customer_id,
+//   seller_id: sale.seller_id,
+//   date: sale.date,
+//   fileName: sale.File == null ? "" : sale.File.nsame,
+// }));
+
+async function findAllBetweenDateToDataGrid(start, end) {
+  const sale = await Sales.findAll({
+    attributes: [
+      "id",
+      "invoice",
+      "quanty",
+      "price",
+      "discount",
+      "return_",
+      "total_return",
+      "total_sale",
+      "total",
+      [sequelize.literal("`Product`.`name`"), "productName"],
+      [sequelize.literal("`Customer`.`name`"), "customerName"],
+      [sequelize.literal("`Seller`.`name`"), "sellerName"],
+      [sequelize.literal("`File`.`name`"), "fileName"],
+    ],
+    include: [
+      {
+        model: Products,
+        attributes: ["name"],
+      },
+      {
+        model: Customers,
+        attributes: ["name"],
+      },
+      {
+        model: Sellers,
+        attributes: ["name"],
+      },
+      {
+        model: Files,
+        attributes: ["name"],
+      },
+    ],
+    where: {
+      date: {
+        [sequelize.Op.between]: [start, end],
+      },
+    },
+  })
+    .then((data) => {
+      return { code: 1, data: data };
+    })
+    .catch((err) => {
+      return { code: 0, data: err };
+    });
+
+  return sale;
+}
+
+async function totalSalesBetweenDate(start, end) {
+  const sale = await Sales.sum("total", {
+    where: {
+      date: {
+        [sequelize.Op.between]: [start, end],
+      },
+    },
+  })
+    .then((data) => {
+      return { code: 1, data: data };
+    })
+    .catch((err) => {
+      return { code: 0, data: err };
+    });
+
+  return sale;
+}
+
+//totalUnitsBetweenDate
+
+async function totalUnitsBetweenDate(start, end) {
+  const sale = await Sales.sum("quanty", {
+    where: {
+      date: {
+        [sequelize.Op.between]: [start, end],
+      },
+    },
+  })
+    .then((data) => {
+      return { code: 1, data: data };
+    })
+    .catch((err) => {
+      return { code: 0, data: err };
+    });
+
+  return sale;
+}
+
+async function salesToChartBetweenDate(start, end) {
+  const sale = await Sales.findAll({
+    where: {
+      date: {
+        [sequelize.Op.between]: [start, end],
+      },
+    },
+    attributes: ["date", "total"],
+  })
+    .then((data) => {
+      const data_ = data.map((sale) => ({
+        day: moment(sale.date).format("DD-MM-YYYY"),
+        sales: sale.total,
+      }));
+
+      const dataGrouped = groupSalesByDay(data_);
+      return { code: 1, data: dataGrouped };
+    })
+    .catch((err) => {
+      return { code: 0, data: err };
+    });
+
+  return sale;
+}
+
+function groupSalesByDay(salesArray) {
+  return salesArray.reduce((acc, curr) => {
+    const day = curr.day;
+    const sales = curr.sales;
+
+    // Verificar si ya existe una entrada para este día en el acumulador
+    const existingDay = acc.find((item) => item.day === day);
+
+    // Si ya existe, se suma el total de ventas al existente
+    if (existingDay) {
+      existingDay.sales += sales;
+    } else {
+      // Si no existe, se crea una nueva entrada para este día
+      acc.push({ day, sales });
+    }
+
+    return acc;
+  }, []);
+}
 
 sales.create = create;
 sales.findAll = findAll;
@@ -611,15 +831,24 @@ sales.totalQuantyBetweenDate = totalQuantyBetweenDate;
 sales.findAllSoldProductsBetweenDates = findAllSoldProductsBetweenDates;
 sales.customersSalesBetweenDate = customersSalesBetweenDate;
 sales.findAllGroupByCategoryBetweenDates = findAllGroupByCategoryBetweenDates;
-sales.findAllBySellerGroupByCategoryBetweenDate =findAllBySellerGroupByCategoryBetweenDate;
+sales.findAllBySellerGroupByCategoryBetweenDate =
+  findAllBySellerGroupByCategoryBetweenDate;
 sales.totalSalesByProductBetweenDates = totalSalesByProductBetweenDates;
 sales.totalQuantyByProductBetweenDates = totalQuantyByProductBetweenDates;
-sales.findAllByProductBetweenDateGroupByDate = findAllByProductBetweenDateGroupByDate;
+sales.findAllByProductBetweenDateGroupByDate =
+  findAllByProductBetweenDateGroupByDate;
 sales.totalSalesByCustomerBetweenDates = totalSalesByCustomerBetweenDates;
 sales.totalQuantyByCustomerBetweenDates = totalQuantyByCustomerBetweenDates;
-sales.findAllByCustomerBetweenDateGroupByDate = findAllByCustomerBetweenDateGroupByDate;
-sales.findAllByCustomerBetweenDateGroupByCategory = findAllByCustomerBetweenDateGroupByCategory;
+sales.findAllByCustomerBetweenDateGroupByDate =
+  findAllByCustomerBetweenDateGroupByDate;
+sales.findAllByCustomerBetweenDateGroupByCategory =
+  findAllByCustomerBetweenDateGroupByCategory;
 sales.destroy = destroy;
 sales.destroyAllByFile = destroyAllByFile;
+sales.findAllToDataGrid = findAllToDataGrid;
+sales.findAllBetweenDateToDataGrid = findAllBetweenDateToDataGrid;
+sales.totalSalesBetweenDate = totalSalesBetweenDate;
+sales.totalUnitsBetweenDate = totalUnitsBetweenDate;
+sales.salesToChartBetweenDate = salesToChartBetweenDate;
 
 module.exports = sales;

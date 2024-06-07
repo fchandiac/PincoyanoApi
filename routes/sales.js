@@ -148,5 +148,45 @@ router.post('/sales/destroyAllByFile', async (req, res) => {
 
 
 
+router.get('/sales/findAllToDataGrid', async (req, res) => {
+    const sale = await sales.findAllToDataGrid()
+    res.json(sale)
+})
+
+
+//async function findAllBetweenDateToDataGrid(start, end)
+
+router.post('/sales/findAllBetweenDateToDataGrid', async (req, res) => {
+    const { start, end } = req.body
+    const sale = await sales.findAllBetweenDateToDataGrid(start, end)
+    res.json(sale)
+})
+
+
+//  function totalSalesBetweenDate(start, end) 
+
+router.post('/sales/totalSalesBetweenDate', async (req, res) => {
+    const { start, end } = req.body
+    const sale = await sales.totalSalesBetweenDate(start, end)
+    res.json(sale)
+})
+
+
+//function totalUnitsBetweenDate(start, end)
+
+router.post('/sales/totalUnitsBetweenDate', async (req, res) => {
+    const { start, end } = req.body
+    const sale = await sales.totalUnitsBetweenDate(start, end)
+    res.json(sale)
+})
+
+
+//  function salesToChartBetweenDate(start, end)
+
+router.post('/sales/salesToChartBetweenDate', async (req, res) => {
+    const { start, end } = req.body
+    const sale = await sales.salesToChartBetweenDate(start, end)
+    res.json(sale)
+})
 
 module.exports = router

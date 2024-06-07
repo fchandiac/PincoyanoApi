@@ -10,6 +10,11 @@ module.exports = {
           name: 'Administrador',
           pass: 'admin', // Asegúrate de usar una contraseña segura y hashéala
         },
+        {
+            user_name: 'eric',
+            name: 'Eric Espinoza',
+            pass: '1234', // Asegúrate de usar una contraseña segura y hashéala
+        }
       ], {});
 
       // Crear vendedores

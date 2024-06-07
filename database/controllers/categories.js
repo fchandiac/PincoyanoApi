@@ -39,11 +39,19 @@ async function destroy(id) {
     return categorie
 }
 
+async function findAllToDataGrid() {
+    const categorie = await Categories.findAll({
+        attributes: ['id', 'name', 'description']
+    }).then(data => { return { 'code': 1, 'data': data } }).catch(err => { return { 'code': 0, 'data': err } })
+    return categorie
+}
+
 categories.create = create
 categories.findAll = findAll
 categories.findOneByName = findOneByName
 categories.findOneById = findOneById
 categories.update = update
 categories.destroy = destroy
+
 
 module.exports = categories
