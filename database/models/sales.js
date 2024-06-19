@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         product_id: {type: DataTypes.INTEGER},
         customer_id: {type: DataTypes.INTEGER,},
         seller_id: {type: DataTypes.INTEGER },
+        // seller_code: {type: DataTypes.INTEGER },
         file_id: {type: DataTypes.INTEGER },
         date: {type: DataTypes.DATE},
 

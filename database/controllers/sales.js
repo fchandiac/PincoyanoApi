@@ -23,6 +23,7 @@ async function create(
   product_id,
   customer_id,
   seller_id,
+  // seller_code,
   date,
   file_id
 ) {
@@ -38,6 +39,7 @@ async function create(
     product_id,
     customer_id,
     seller_id,
+    // seller_code,
     date,
     file_id,
   })

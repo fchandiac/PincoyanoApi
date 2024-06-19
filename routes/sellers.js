@@ -20,4 +20,17 @@ router.post('/sellers/findByName', async (req, res) => {
 })
 
 
+router.post('/sellers/findByCode', async (req, res) => {
+    const { code } = req.body
+    const seller = await sellers.findByCode(code)
+    res.json(seller)
+})
+
+
+router.post('/sellers/updateName', async (req, res) => {
+    const { id, name } = req.body
+    const seller = await sellers.updateName(id, name)
+    res.json(seller)
+})
+
 module.exports = router

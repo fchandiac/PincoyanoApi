@@ -226,6 +226,7 @@ module.exports = {
             key: "id",
           },
         },
+        // seller_code: { type: Sequelize.INTEGER, allowNull: true, defaultValue: 0 },
         file_id: {
           allowNull: true,
           unique: false,
